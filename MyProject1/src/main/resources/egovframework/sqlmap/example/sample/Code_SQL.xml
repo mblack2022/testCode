@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.apache.org//DTD SQL Map 2.0//EN" "https://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CodeSpace">
+
+	<typeAlias  alias="egovMap" 	 type="egovframework.rte.psl.dataaccess.util.EgovMap"/>	
+	<typeAlias  alias="codeVO" 		 type="egovframework.example.sample.service.CodeVO"/>
+	
+	<select id = "codeDAO.selectCodeList"  resultClass= "egovMap">
+		SELECT 	codeno, 
+				gid,  
+				IF (gid='100','업무', IF(gid='200','취미','기타')) gname,
+				codenm
+		FROM 	codes 
+		ORDER BY gid, codeno;	
+	</select>
+
+	<select id="codeDAO.selectCodeCount" resultClass="java.lang.Integer">
+		SELECT count(*) cnt FROM codes
+	</select>
+
+	<select id="codeDAO.selectCode" resultClass="codeVO">
+		SELECT 	codeno,gid,codenm 
+		FROM	codes
+		WHERE	codeno = #codeno#
+	</select>
+
+	<insert id = "codeDAO.insertCode">
+		INSERT
+		INTO 	codes(gid, codenm) 
+		VALUES  (#gid#, #codenm#)
+	</insert>
+	
+	<delete id="codeDAO.deleteCode">
+		DELETE FROM codes 
+		WHERE  codeno = #codeno#
+	</delete>
+	
+	<update id="codeDAO.updateCode">
+		UPDATE 	codes
+		SET		gid = #gid#, codenm = #codenm#
+		WHERE	codeno = #codeno#
+	</update>
+
+</sqlMap>	

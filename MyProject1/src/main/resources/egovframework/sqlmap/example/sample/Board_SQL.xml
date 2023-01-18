@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.apache.org//DTD SQL Map 2.0//EN" "https://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="NBoardSpace">
+
+	<typeAlias  alias="egovMap"  type="egovframework.rte.psl.dataaccess.util.EgovMap"/>		
+	<typeAlias  alias="boardVO"  type="main.service.BoardVO"/>
+
+	
+	<insert id = "boardDAO.insertNBoard">
+		INSERT
+		INTO 	nboard(title,pass,name,content,hits,rdate) 
+		VALUES  (#title#,
+				 #pass#,
+				 #name#,
+				 #content#,
+				 0,
+				 sysdate())
+	</insert>
+	
+	<select id = "boardDAO.selectNBoardCnt" resultClass="java.lang.Integer">
+		SELECT  COUNT(*)
+		FROM 	nboard
+		<isNotNull property="seachFilter">
+			<isEqual  property="seachFilter" compareValue="title" >
+				WHERE	title LIKE CONCAT('%' ,#seachText#,'%')
+			</isEqual>
+			<isEqual  property="seachFilter" compareValue="name" >
+				WHERE	name LIKE CONCAT('%' ,#seachText#,'%')
+			</isEqual>
+			<isEqual  property="seachFilter" compareValue="content" >
+				WHERE	content LIKE CONCAT('%' ,#seachText#,'%')
+			</isEqual>
+		</isNotNull>		
+	</select>
+	
+	<select id = "boardDAO.selectPassCntNBoard" resultClass="java.lang.Integer">
+		SELECT  COUNT(*)
+		FROM 	nboard
+		WHERE	unq  = #unq#
+		AND		pass = #pass#
+	</select>
+	
+
+	<select id = "boardDAO.selectNBoardList" resultClass="egovMap">
+		SELECT	unq,
+				title,
+				name,
+				hits,
+				LEFT(rdate,10) rdate
+		FROM
+				nboard
+		<isNotNull property="seachFilter">
+			<isEqual  property="seachFilter" compareValue="title" >
+				WHERE	title LIKE CONCAT('%' ,#seachText#,'%')
+			</isEqual>
+			<isEqual  property="seachFilter" compareValue="name" >
+				WHERE	name LIKE CONCAT('%' ,#seachText#,'%')
+			</isEqual>
+			<isEqual  property="seachFilter" compareValue="content" >
+				WHERE	content LIKE CONCAT('%' ,#seachText#,'%')
+			</isEqual>
+		</isNotNull>		
+		ORDER BY
+				unq	DESC	
+		LIMIT	#startIndex#, #listCnt#
+	</select>
+	
+	<select id = "boardDAO.selectNBoardDetail" resultClass="boardVO">
+		SELECT	unq,
+				title,
+				pass,
+				name,
+				content,
+				hits,
+				rdate
+		FROM	nboard
+		WHERE	unq = #unq#
+	</select>
+
+	<update id = "boardDAO.updateNBoardHits">
+		UPDATE	nboard
+		SET		hits= hits + 1
+		WHERE 	unq = #unq#
+	</update>
+
+	<update id = "boardDAO.updateNBoardDetail">
+		UPDATE	nboard
+		SET		title 	= #title#,
+				content = #content#
+				rdate	= #rdate#
+		WHERE	unq 	= #unq#
+	</update>
+
+	<delete id = "boardDAO.deleteNBoardDetail" >
+		DELETE
+		FROM 	nboard
+		WHERE	unq 	= #unq#
+		AND		pass	= #pass#
+	</delete>
+
+</sqlMap>
